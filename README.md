@@ -2,4 +2,4 @@
 #SPbSU, Faculty of Applied Mathematics and Control Processes, 2nd semester
 #Daniil Zhilin
 
-How use in linux read in release
+Read release how to use in Linux.
