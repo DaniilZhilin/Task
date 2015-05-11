@@ -102,7 +102,7 @@ vector<Fileinfo> compare_lists(vector<Fileinfo> newfl, vector<Fileinfo> oldfl) {
 	return newfl;
 }
 
-// Saving of kson file
+// Saving of json file
 void savejson(string filename, vector<Fileinfo> vec_finfo) {
 
 	boost::property_tree::ptree tree;
