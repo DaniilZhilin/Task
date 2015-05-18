@@ -59,13 +59,19 @@ vector<Fileinfo> compare_lists(vector<Fileinfo> newfl, vector<Fileinfo> oldfl) {
 
 	//Fill out vector with this information
 	for (int i = 1; counter;){
+		//Try to read information to last file
+		try{
+			
 		value = tree.get<string>("File" + std::to_string(i));
 		it1.path = value;
 		value = tree.get<string>("Hash" + std::to_string(i));
 		it1.hash = value;
 		oldfl.push_back(it1);
 		++i;
-		if (i > counter){ 
+		
+		}
+		//Get out from cycle when it's a last file
+		catch(...){
 			break;
 		}
 	}
@@ -102,18 +108,29 @@ vector<Fileinfo> compare_lists(vector<Fileinfo> newfl, vector<Fileinfo> oldfl) {
 	return newfl;
 }
 
+};
 // Saving of json file
 void savejson(string filename, vector<Fileinfo> vec_finfo) {
 
 	boost::property_tree::ptree tree;
 
 	int i = 1;
+	
+	//General size
+	int sizesize = 0;
 	for (Fileinfo it : vec_finfo) {
 		tree.put("File" + std::to_string(i), it.path);
 		tree.put("Size" + std::to_string(i), it.size);
 		tree.put("Hash" + std::to_string(i), it.hash);
 		i++;
+		
+		sizesize = sizesize + it.size;
 	}
+
+
+        //Output of general size
+         cout << "General size:" <<
+                  sizesize << endl;
 
 	std::stringstream ss;
 	boost::property_tree::write_json(ss, tree);
@@ -122,6 +139,41 @@ void savejson(string filename, vector<Fileinfo> vec_finfo) {
 	std::ofstream ofs("result.json");
 	boost::property_tree::write_json(ofs, tree, true);
 	ofs.close();
+	cout<<"Do you also want to save in TSV?"<<endl;
+	//enter yes or no
+	//downoload md5.h and md5.cpp from https://github.com/Oleg-Leb/Ex.2
+	string y;
+	cin>>y;
+	if (y=='yes')
+	{
+		ofstream f("AbFiles.tsv");
+	if (is_directory(path) && exists(path))
+	{
+
+		recursive_directory_iterator end;
+		for (recursive_directory_iterator it(path); it != end; ++it)
+			if (is_regular_file(it->path()))
+			{
+
+				stringstream result;
+				string a;
+				ifstream myfile;
+				myfile.open(it->path().string(), ios::binary);
+				result << myfile.rdbuf();
+				a = result.str();
+				f << it->path().filename().string() << "\n" << it->path() << "\n" <<  file_size(it->path()) << "\n" <<  md5(a) << endl;
+				f << endl;
+			}
+	}
+	else
+	{
+		cout << path << " does not exist\n";
+	}
+
+
+	f.close();
+	
+	
 }
 
 //Getting directory list with the help of boost filesystem
